@@ -15,7 +15,9 @@ also keep in mind at now this package use templates based on jinja2
 Installation
 ------------
 
-pip install pyramid_i18_helper
+.. code-block:: bash
+
+    pip install pyramid_i18_helper
 
 add then add this package to your application
 
