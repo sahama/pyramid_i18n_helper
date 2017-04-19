@@ -24,12 +24,14 @@ add then add this package to your application
 .. code-block:: ini
 
     pyramid.includes =
+        pyramid_layout
         pyramid_jinja2
         pyramid_i18_helper
 
 
 .. code-block:: python
 
+    config.include('pyramid_layout')
     config.include('pyramid_jinja2')
     config.include('pyramid_i18_helper')
 

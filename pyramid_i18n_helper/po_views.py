@@ -7,8 +7,6 @@ import polib
 import os
 
 
-from . import root_package_directory as root_directory
-from . import root_package_name as package_name
 
 @view_defaults(route_name='po', renderer='templates/po.jinja2', permission='admin')
 class PoView():
@@ -18,11 +16,13 @@ class PoView():
         self.context = context
         _ = request.translate
 
+        self.helper = request.registry['i18n_helper']
+
 
         self.lang = request.matchdict['lang']
         lang = self.lang
 
-        self.po = polib.pofile(os.path.join(root_directory, 'locale', lang, 'LC_MESSAGES', '{0}.po'.format(package_name)))
+        self.po = polib.pofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.po'.format(self.helper.package_name)))
         po = self.po
         self.po_entries = {entry.msgid: entry.msgstr for entry in po}
         po_entries = self.po_entries
@@ -89,8 +89,8 @@ class PoView():
             for entry in self.po:
                 entry.msgstr = appstruct['msgid'].get(entry.msgid, '')
 
-            po.save(os.path.join(root_directory, 'locale', lang, 'LC_MESSAGES', '{0}.po'.format(package_name)))
-            po.save_as_mofile(os.path.join(root_directory, 'locale', lang, 'LC_MESSAGES', '{0}.mo'.format(package_name)))
+            po.save(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.po'.format(self.helper.package_name)))
+            po.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.mo'.format(self.helper.package_name)))
 
         return self.get_view()
 
@@ -106,15 +106,15 @@ class PoView():
 
         lang = request.matchdict['lang']
 
-        pot = polib.pofile(os.path.join(root_directory, 'locale', '{0}.pot'.format(package_name)))
-        po = polib.pofile(os.path.join(root_directory, 'locale', lang, 'LC_MESSAGES', '{0}.po'.format(package_name)))
+        pot = polib.pofile(os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.helper.package_name)))
+        po = polib.pofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.po'.format(self.helper.package_name)))
         po_entries = {entry.msgid: entry.msgstr for entry in po}
 
         for entry in pot:
             if not entry.msgid in po_entries:
                 po.append(entry)
 
-        po.save(os.path.join(root_directory, 'locale', lang, 'LC_MESSAGES', '{0}.po'.format(package_name)))
-        po.save_as_mofile(os.path.join(root_directory, 'locale', lang, 'LC_MESSAGES', '{0}.mo'.format(package_name)))
+        po.save(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.po'.format(self.helper.package_name)))
+        po.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.mo'.format(self.helper.package_name)))
         return self.get_view()
 
