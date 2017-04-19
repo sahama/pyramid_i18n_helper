@@ -9,8 +9,8 @@ this package add two view to your pyramid based application:
 
 in pot view you can edit pot file
 in po view po and mo file for lang will be create
-remember this package depend on pyramid_layout default layout
-also keep in mind at now this package use templates based on jinja2
+keep in mind this package depend on pyramid_layout default layout
+also at now this package use templates based on jinja2
 
 Installation
 ------------
@@ -38,3 +38,10 @@ Support
 -------
 
 You can use `project issue page <https://github.com/sahama/pyramid_i18n_helper/issues/>`_ to submit your issue
+
+Khown Issues
+------------
+
+ - After translating a msgid you have to restart your application
+ - At now this package use pyramid_layout default layout. form `pyramid_layout documentation page <http://docs.pylonsproject.org/projects/pyramid_layout/en/latest/layouts.html>`_ `main_template is the template object that provides the main template (aka, o-wrap) for the view`. so if your application dont have main_layout. you may have problem.
+ - main_layout template have to designed via jinja2
