@@ -11,7 +11,7 @@ class I18NHelper(object):
 
     @reify
     def package_name(self):
-        return os.path.basename(self.package.__file__)
+        return os.path.basename(os.path.dirname(self.package.__file__))
 
 
 def includeme(config):
