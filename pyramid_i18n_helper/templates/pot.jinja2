@@ -1,16 +1,28 @@
 {% extends main_template %}
 
 {% block content %}
-    {% for css in form.get_widget_resources()['css'] %}
+    {% for css in msg_form.get_widget_resources()['css'] %}
         <link rel="stylesheet" href="{{ request.static_url(css) }}" type="text/css"/>
     {% endfor %}
 
 
-    {% for js in form.get_widget_resources()['js'] %}
+    {% for js in msg_form.get_widget_resources()['js'] %}
         <script type="text/javascript" src="{{ request.static_url(js) }}"></script>
     {% endfor %}
 
-    {{ form.render(form_data) | safe }}
+
+    {% for css in lang_form.get_widget_resources()['css'] %}
+        <link rel="stylesheet" href="{{ request.static_url(css) }}" type="text/css"/>
+    {% endfor %}
+
+
+    {% for js in lang_form.get_widget_resources()['js'] %}
+        <script type="text/javascript" src="{{ request.static_url(js) }}"></script>
+    {% endfor %}
+
+    {{ lang_form.render() | safe }}
+    {{ msg_form.render(msg_form_data) | safe }}
+
 
 {% endblock content %}
 {% block title %}
