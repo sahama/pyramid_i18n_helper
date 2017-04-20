@@ -17,7 +17,7 @@ Installation
 
 .. code-block:: bash
 
-    pip install pyramid_i18_helper
+    pip install pyramid_i18n_helper
 
 add then add this package to your application
 
@@ -26,14 +26,14 @@ add then add this package to your application
     pyramid.includes =
         pyramid_layout
         pyramid_jinja2
-        pyramid_i18_helper
+        pyramid_i18n_helper
 
 
 .. code-block:: python
 
     config.include('pyramid_layout')
     config.include('pyramid_jinja2')
-    config.include('pyramid_i18_helper')
+    config.include('pyramid_i18n_helper')
 
 
 Support
