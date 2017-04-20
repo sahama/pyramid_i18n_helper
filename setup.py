@@ -3,9 +3,11 @@ import os
 from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
-README = "readme content"
+with open(os.path.join(here, 'README.rst')) as f:
+    README = f.read()
 
-CHANGES = "change log content"
+with open(os.path.join(here, 'CHANGES.rst')) as f:
+    CHANGES = f.read()
 
 requires = [
     'pyramid',
@@ -18,7 +20,7 @@ requires = [
 
 
 setup(name='pyramid_i18n_helper',
-      version='0.1',
+      version='0.1a',
       description='pyramid_i18n_helper',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
