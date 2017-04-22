@@ -1,5 +1,5 @@
 Pyramid I18N Helper
-===========
+===================
 
 This is a helper for internationalization and localization in `Pyramid <https://trypyramid.com/>`_
 this package add two view to your pyramid based application:
