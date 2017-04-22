@@ -5,6 +5,7 @@ from deform import widget
 from pyramid.request import Request
 import polib
 import os
+from pyramid.httpexceptions import HTTPFound
 
 
 @view_defaults(route_name='pot', renderer='templates/pot.jinja2', permission='admin')
@@ -37,8 +38,16 @@ class PotView():
 
 
         # LANG FORM
+        langs_dir = os.path.join(self.helper.package_dir, 'locale')
+        langs_choices = [lang for lang in os.listdir(langs_dir) if os.path.isdir(os.path.join(langs_dir, lang))]
+
+
+
         class NewLang(colander.Schema):
-            new_lang = colander.SchemaNode(colander.String(), title="New Lang")
+            new_lang = colander.SchemaNode(colander.String(),
+                                           widget=deform.widget.AutocompleteInputWidget(values=langs_choices,
+                                                                                        min_length=0),
+                                           title="New Lang")
 
         def validator(node, appstruct):
             return True
@@ -61,12 +70,10 @@ class PotView():
 
         msg_form_data = {'msgid': entries}
 
-        langs = os.listdir(os.path.join(self.helper.package_dir, 'locale'))
-        print(langs)
 
         return {'msg_form': self.msg_form,
                 'msg_form_data': msg_form_data,
-                'lang_form': self.lang_form
+                'lang_form': self.lang_form,
                 }
 
     @view_config(request_method='POST', request_param='msgid')
@@ -103,9 +110,12 @@ class PotView():
     def lang_view(self):
 
         lang = self.request.POST.get('new_lang', '').strip()
-        os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang))
-        os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES'))
-        self.pot.save(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.po'.format(self.helper.package_name)))
-        self.pot.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.mo'.format(self.helper.package_name)))
+        if not os.path.isdir(os.path.join(self.helper.package_dir, 'locale', lang)):
+            os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang))
+            os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES'))
+            self.pot.save(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.po'.format(self.helper.package_name)))
+            self.pot.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.mo'.format(self.helper.package_name)))
+        else:
+            pass
 
-        return self.get_view()
+        return HTTPFound(location=self.request.route_url('po', lang=lang))
