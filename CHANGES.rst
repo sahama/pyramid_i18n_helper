@@ -1,6 +1,12 @@
 Changes
 =======
 
+v 0.2
+-----
+
+ - add (newlang / go to lang) field
+ - some bug fix
+
 v 0.1
 -----
 
