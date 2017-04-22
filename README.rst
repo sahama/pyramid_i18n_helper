@@ -29,6 +29,8 @@ add then add this package to your application
         pyramid_i18n_helper
 
 
+or
+
 .. code-block:: python
 
     config.include('pyramid_layout')
