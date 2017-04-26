@@ -81,7 +81,6 @@ def includeme(config):
 
     tsf = TranslationStringFactory(helper.package_name)
     def add_localizer(event):
-        print('event')
         request = event.request
         localizer = get_localizer(request)
 
