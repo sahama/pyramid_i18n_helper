@@ -49,3 +49,31 @@ Khown Issues
  - After translating a msgid you have to restart your application
  - At now this package use pyramid_layout default layout. form `pyramid_layout documentation page <http://docs.pylonsproject.org/projects/pyramid_layout/en/latest/layouts.html>`_ `main_template is the template object that provides the main template (aka, o-wrap) for the view`. so if your application dont have main_layout. you may have problem.
  - main_layout template have to designed via jinja2
+
+
+Changes
+=======
+
+v 0.2.3
+-------
+
+ - some bug fix
+
+v 0.2
+-----
+
+ - add (newlang / go to lang) field
+ - some bug fix
+
+v 0.1
+-----
+
+ - some modification
+ - apply suggestion from #1. thank @mmerickel
+
+v 0.0
+-----
+
+ - init project and create skeleton of it
+
+

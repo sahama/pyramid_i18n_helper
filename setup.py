@@ -6,9 +6,6 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.rst')) as f:
     README = f.read()
 
-with open(os.path.join(here, 'CHANGES.rst')) as f:
-    CHANGES = f.read()
-
 requires = [
     'pyramid',
     'pyramid_jinja2',
@@ -20,9 +17,9 @@ requires = [
 
 
 setup(name='pyramid_i18n_helper',
-      version='0.2.1',
+      version='0.2.3',
       description='pyramid_i18n_helper',
-      long_description=README + '\n\n' + CHANGES,
+      long_description=README,
       classifiers=[
           "Programming Language :: Python",
           "Framework :: Pyramid",
