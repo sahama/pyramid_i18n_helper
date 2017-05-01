@@ -54,6 +54,11 @@ Khown Issues
 Changes
 =======
 
+v 0.2.4
+-------
+
+ - some bug fix
+
 v 0.2.3
 -------
 
