@@ -1,13 +1,15 @@
 import os
+import sys
 import inspect
 
 from pyramid.decorator import reify
 from pyramid.i18n import TranslationStringFactory
 from pyramid.i18n import get_localizer
-from pyramid.events import NewRequest
+from pyramid.events import NewRequest, BeforeRender
 from pyramid.path import package_path
 from pyramid.util import action_method
-import sys
+from pyramid.threadlocal import get_current_request
+import polib
 
 class _PackageFinder(object):
     inspect = staticmethod(inspect)
@@ -83,15 +85,28 @@ def includeme(config):
     def add_localizer(event):
         request = event.request
         localizer = get_localizer(request)
+        new_pot_wntries = config.registry.get('i18n_helper_pot_file')
 
         def auto_translate(string, mapping=None, domain=None):
-            # print(string, mapping, domain)
+            with open('log', 'a') as f:
+                print("{0} {1} {2}".format(string, mapping, domain))
             return localizer.translate(tsf(string), mapping=mapping, domain=domain)
 
+        print('end')
         request.localizer = localizer
         request.translate = auto_translate
 
+
+    def add_renderer_globals(event):
+        request = event.get('request')
+        if request is None:
+            request = get_current_request()
+
+        event['_'] = request.translate
+        event['localizer'] = request.localizer
+
     config.add_subscriber(add_localizer, NewRequest)
+    config.add_subscriber(add_renderer_globals, BeforeRender)
     config.scan('pyramid_i18n_helper')
 
 
