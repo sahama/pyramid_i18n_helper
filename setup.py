@@ -20,7 +20,7 @@ requires = [
 
 
 setup(name='pyramid_i18n_helper',
-      version='0.2',
+      version='0.2.1',
       description='pyramid_i18n_helper',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
