@@ -7,8 +7,11 @@ this package add two view to your pyramid based application:
  - pot view in route /pot
  - po view in route /po/{lang}
 
+and add `Babel <http://babel.pocoo.org/en/latest/>`_ locale object to request.
+
 in pot view you can edit pot file
-in po view po and mo file for lang will be create
+in po view po and mo file for lang will be create. also you can update po file from pot file.
+
 keep in mind this package depend on pyramid_layout default layout
 also at now this package use templates based on jinja2
 
@@ -90,5 +93,3 @@ v 0.0
 -----
 
  - init project and create skeleton of it
-
-
