@@ -5,7 +5,7 @@ import inspect
 from pyramid.decorator import reify
 from pyramid.i18n import TranslationStringFactory
 from pyramid.i18n import get_localizer
-from pyramid.events import NewRequest, BeforeRender
+from pyramid.events import NewRequest, BeforeRender, NewResponse
 from pyramid.path import package_path
 from pyramid.util import action_method
 from pyramid.threadlocal import get_current_request
@@ -83,18 +83,23 @@ def includeme(config):
     config.add_route('pot', '/pot')
 
     tsf = TranslationStringFactory(helper.package_name)
+
+    pot_msgids = {}
     def add_localizer(event):
         request = event.request
         localizer = get_localizer(request)
 
         def auto_translate(string, mapping=None, domain=None):
-            # with open('log', 'a') as f:
-            #     print("{0} {1} {2}".format(string, mapping, domain))
+            tmp = domain if domain else helper.package_name
+            if not tmp in pot_msgids:
+                pot_msgids[tmp] = set()
+
+            pot_msgids[tmp].add(string)
+
             return localizer.translate(tsf(string), mapping=mapping, domain=domain)
 
         request.localizer = localizer
         request.translate = auto_translate
-
         request.locale = babel.Locale(*babel.parse_locale(request.localizer.locale_name))
 
 
@@ -108,9 +113,28 @@ def includeme(config):
         event['locale'] = request.locale
 
 
+    def before_response(event):
+        for domain in pot_msgids:
+            s = pot_msgids[domain]
+            if s:
+                new_pot = polib.pofile(
+                    os.path.join(helper.package_dir, 'locale', '{0}.pot'.format(domain)),
+                    check_for_duplicates=True)
+
+                for msgid in [s.pop() for i in range(len(s))]:
+                    entry = polib.POEntry(msgid=msgid)
+                    try:
+                        new_pot.append(entry)
+                    except ValueError as e:
+                        pass
+
+                new_pot.save()
+
+
 
 
     config.add_subscriber(add_localizer, NewRequest)
     config.add_subscriber(add_renderer_globals, BeforeRender)
+    config.add_subscriber(before_response, NewResponse)
     config.scan('pyramid_i18n_helper')
 
