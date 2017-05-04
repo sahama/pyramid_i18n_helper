@@ -18,8 +18,8 @@ requires = [
 
 
 setup(name='pyramid_i18n_helper',
-      version='0.2.6',
-      description='pyramid_i18n_helper',
+      version='0.2.6.1',
+      description='Small tool to help in i18n and l10n',
       long_description=README,
       classifiers=[
           "Programming Language :: Python",

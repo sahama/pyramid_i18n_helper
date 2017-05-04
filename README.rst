@@ -57,7 +57,7 @@ Changes
 v 0.2.6
 -------
 
- - add ability to collet msgids in pot file via i18n_helper.collect_msgid setting as true
+ - add ability to collect msgids in pot file via `i18n_helper.collect_msgid` setting as `true`
 
 v 0.2.5
 -------
