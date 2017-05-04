@@ -54,6 +54,16 @@ Khown Issues
 Changes
 =======
 
+v 0.2.6
+-------
+
+ - add ability to collet msgids in pot file via i18n_helper.collect_msgid setting as true
+
+v 0.2.5
+-------
+
+ - add babel locale object to request
+
 v 0.2.4
 -------
 

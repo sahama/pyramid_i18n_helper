@@ -13,11 +13,12 @@ requires = [
     'pyramid_layout',
     'polib',
     'paginate',
+    'babel',
     ]
 
 
 setup(name='pyramid_i18n_helper',
-      version='0.2.5',
+      version='0.2.6',
       description='pyramid_i18n_helper',
       long_description=README,
       classifiers=[
