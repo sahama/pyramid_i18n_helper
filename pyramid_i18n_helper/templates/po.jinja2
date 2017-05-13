@@ -1,6 +1,34 @@
 {% extends main_template %}
 
 {% block content %}
+    <table class="table">
+    <tr>
+        <th>
+            attr
+        </th>
+        <th>
+            value
+        </th>
+    </tr>
+    <tr>
+        <td>
+            {{ _('lang_direction') }}
+        </td>
+        <td>
+            {{ locale.text_direction }}
+        </td>
+    </tr>
+        <tr>
+        <td>
+            {{ _('character_order') }}
+        </td>
+        <td>
+            {{ _(locale.character_order) }}
+        </td>
+    </tr>
+    </table>
+
+{#    {{ locale.time_zones }}#}
     {% for css in form.get_widget_resources()['css'] %}
         <link rel="stylesheet" href="{{ request.static_url(css) }}" type="text/css"/>
     {% endfor %}
@@ -14,5 +42,5 @@
 
 {% endblock content %}
 {% block title %}
-    {{ _('pot') }}
+    {{ _('translation_for (${en_name}/${display_name})' ,mapping={'en_name':locale.english_name, 'display_name':locale.display_name})  }}
 {% endblock %}

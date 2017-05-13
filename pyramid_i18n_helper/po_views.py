@@ -5,6 +5,7 @@ from deform import widget
 from pyramid.request import Request
 import polib
 import os
+import babel
 
 
 @view_defaults(route_name='po', renderer='pyramid_i18n_helper:templates/po.jinja2', permission='admin')
@@ -17,6 +18,8 @@ class PoView():
         self.lang = request.matchdict['lang']
         self.po = polib.pofile(os.path.join(self.helper.package_dir, 'locale', self.lang, 'LC_MESSAGES',
                                             '{0}.po'.format(self.helper.package_name)))
+
+        self.locale = babel.Locale(*babel.parse_locale(self.lang))
 
     def form_creator(self):
         po_entries = {entry.msgid: entry.msgstr for entry in self.po}
@@ -55,7 +58,7 @@ class PoView():
 
         self.form_creator()
 
-        return {"form": self.form}
+        return {"form": self.form, 'locale': self.locale}
 
     @view_config(request_method="POST")
     def post_view(self):

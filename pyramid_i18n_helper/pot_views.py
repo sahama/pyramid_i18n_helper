@@ -6,6 +6,7 @@ from pyramid.request import Request
 import polib
 import os
 from pyramid.httpexceptions import HTTPFound
+import babel
 
 
 @view_defaults(route_name='pot', renderer='pyramid_i18n_helper:templates/pot.jinja2', permission='admin')
@@ -109,7 +110,11 @@ class PotView():
     @view_config(request_method='POST', request_param='new_lang')
     def lang_view(self):
 
+
         lang = self.request.POST.get('new_lang', '').strip()
+
+        self.request.locale = babel.Locale(*babel.parse_locale(lang))
+
         if not os.path.isdir(os.path.join(self.helper.package_dir, 'locale', lang)):
             os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang))
             os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES'))
