@@ -41,8 +41,13 @@ class PotView():
         # LANG FORM
         langs_dir = os.path.join(self.helper.package_dir, 'locale')
         langs_choices = [lang for lang in os.listdir(langs_dir) if os.path.isdir(os.path.join(langs_dir, lang))]
+        langs_page_choices = [(lang,babel.Locale(lang).display_name) for lang in os.listdir(langs_dir) if os.path.isdir(os.path.join(langs_dir, lang))]
+        print(langs_page_choices)
 
-
+        class LangPage(colander.Schema):
+            lang_page = colander.SchemaNode(colander.String(),
+                                           widget=deform.widget.SelectWidget(values=langs_page_choices),
+                                           title="Lang Page")
 
         class NewLang(colander.Schema):
             new_lang = colander.SchemaNode(colander.String(),
@@ -55,8 +60,13 @@ class PotView():
 
         schema = NewLang(validator=validator)
         schema = schema.bind(request=self.request)
-        self.lang_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('pot'))
-        self.lang_form.buttons.append(deform.Button(name='submit', title='submit'))
+        self.new_lang_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('pot'))
+        self.new_lang_form.buttons.append(deform.Button(name='submit', title='submit'))
+
+        schema = LangPage(validator=validator)
+        schema = schema.bind(request=self.request)
+        self.lang_page_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('pot'))
+        self.lang_page_form.buttons.append(deform.Button(name='submit', title='submit'))
 
     @view_config(request_method="GET")
     def get_view(self):
@@ -74,7 +84,8 @@ class PotView():
 
         return {'msg_form': self.msg_form,
                 'msg_form_data': msg_form_data,
-                'lang_form': self.lang_form,
+                'lang_page_form': self.lang_page_form,
+                'new_lang_form': self.new_lang_form,
                 }
 
     @view_config(request_method='POST', request_param='msgid')
@@ -122,5 +133,17 @@ class PotView():
             self.pot.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.mo'.format(self.helper.package_name)))
         else:
             pass
+
+        return HTTPFound(location=self.request.route_url('po', lang=lang))
+
+
+    @view_config(request_method='POST', request_param='lang_page')
+    def lang_page_view(self):
+
+
+        lang = self.request.POST.get('lang_page', '').strip()
+
+        self.request.locale = babel.Locale(*babel.parse_locale(lang))
+
 
         return HTTPFound(location=self.request.route_url('po', lang=lang))

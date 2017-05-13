@@ -11,16 +11,27 @@
     {% endfor %}
 
 
-    {% for css in lang_form.get_widget_resources()['css'] %}
+    {% for css in lang_page_form.get_widget_resources()['css'] %}
         <link rel="stylesheet" href="{{ request.static_url(css) }}" type="text/css"/>
     {% endfor %}
 
 
-    {% for js in lang_form.get_widget_resources()['js'] %}
+    {% for js in lang_page_form.get_widget_resources()['js'] %}
         <script type="text/javascript" src="{{ request.static_url(js) }}"></script>
     {% endfor %}
 
-    {{ lang_form.render() | safe }}
+
+    {% for css in new_lang_form.get_widget_resources()['css'] %}
+        <link rel="stylesheet" href="{{ request.static_url(css) }}" type="text/css"/>
+    {% endfor %}
+
+
+    {% for js in new_lang_form.get_widget_resources()['js'] %}
+        <script type="text/javascript" src="{{ request.static_url(js) }}"></script>
+    {% endfor %}
+
+    {{ lang_page_form.render() | safe }}
+    {{ new_lang_form.render() | safe }}
     {{ msg_form.render(msg_form_data) | safe }}
 
 
