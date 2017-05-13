@@ -7,7 +7,7 @@ import polib
 import os
 
 
-@view_defaults(route_name='po', renderer='templates/po.jinja2', permission='admin')
+@view_defaults(route_name='po', renderer='pyramid_i18n_helper:templates/po.jinja2', permission='admin')
 class PoView():
     def __init__(self, context, request: Request):
         self.request = request

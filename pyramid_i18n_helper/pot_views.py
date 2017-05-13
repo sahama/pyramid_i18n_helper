@@ -8,7 +8,7 @@ import os
 from pyramid.httpexceptions import HTTPFound
 
 
-@view_defaults(route_name='pot', renderer='templates/pot.jinja2', permission='admin')
+@view_defaults(route_name='pot', renderer='pyramid_i18n_helper:templates/pot.jinja2', permission='admin')
 class PotView():
     def __init__(self, context, request: Request):
         self.request = request

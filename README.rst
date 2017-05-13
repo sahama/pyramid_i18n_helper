@@ -61,6 +61,7 @@ v 0.2.6
 -------
 
  - add ability to collect msgids in pot file via `i18n_helper.collect_msgid` setting as `true`
+ - some debug
 
 v 0.2.5
 -------
