@@ -15,7 +15,7 @@ class PoView():
         _ = request.translate
         self.helper = request.registry['i18n_helper']
         self.lang = request.matchdict['lang']
-        self.po = polib.pofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
+        self.po = polib.pofile(os.path.join(self.helper.package_dir, 'locale', self.lang, 'LC_MESSAGES',
                                             '{0}.po'.format(self.helper.package_name)))
 
     def form_creator(self):
