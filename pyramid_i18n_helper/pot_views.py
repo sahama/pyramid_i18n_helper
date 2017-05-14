@@ -7,6 +7,7 @@ import polib
 import os
 from pyramid.httpexceptions import HTTPFound
 import babel
+import locale
 
 
 @view_defaults(route_name='pot', renderer='pyramid_i18n_helper:templates/pot.jinja2', permission='admin')
@@ -40,20 +41,32 @@ class PotView():
 
         # LANG FORM
         langs_dir = os.path.join(self.helper.package_dir, 'locale')
-        langs_choices = [lang for lang in os.listdir(langs_dir) if os.path.isdir(os.path.join(langs_dir, lang))]
-        langs_page_choices = [(lang,babel.Locale(lang).display_name) for lang in os.listdir(langs_dir) if os.path.isdir(os.path.join(langs_dir, lang))]
-        print(langs_page_choices)
+        created_langs_choices = []
+        for lang in os.listdir(langs_dir):
+            if os.path.isdir(os.path.join(langs_dir, lang)):
+                lang_locale = babel.Locale(*babel.parse_locale(lang))
+                created_langs_choices.append(
+                    (lang , '{en_name}/{display_name}'.format(
+                        en_name=lang_locale.english_name,
+                        display_name=lang_locale.display_name )
+                    )
+                )
 
-        class LangPage(colander.Schema):
-            lang_page = colander.SchemaNode(colander.String(),
-                                           widget=deform.widget.SelectWidget(values=langs_page_choices),
-                                           title="Lang Page")
+        available_langs_choices = sorted(locale.locale_alias)
+        print(created_langs_choices)
+
 
         class NewLang(colander.Schema):
             new_lang = colander.SchemaNode(colander.String(),
-                                           widget=deform.widget.AutocompleteInputWidget(values=langs_choices,
+                                           widget=deform.widget.AutocompleteInputWidget(values=available_langs_choices,
                                                                                         min_length=0),
                                            title="New Lang")
+
+        class SelectLang(colander.Schema):
+            select_lang = colander.SchemaNode(colander.String(),
+                                           widget=deform.widget.SelectWidget(values=created_langs_choices),
+                                           title="Select Lang")
+
 
         def validator(node, appstruct):
             return True
@@ -63,10 +76,10 @@ class PotView():
         self.new_lang_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('pot'))
         self.new_lang_form.buttons.append(deform.Button(name='submit', title='submit'))
 
-        schema = LangPage(validator=validator)
+        schema = SelectLang(validator=validator)
         schema = schema.bind(request=self.request)
-        self.lang_page_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('pot'))
-        self.lang_page_form.buttons.append(deform.Button(name='submit', title='submit'))
+        self.select_lang_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('pot'))
+        self.select_lang_form.buttons.append(deform.Button(name='submit', title='submit'))
 
     @view_config(request_method="GET")
     def get_view(self):
@@ -84,8 +97,8 @@ class PotView():
 
         return {'msg_form': self.msg_form,
                 'msg_form_data': msg_form_data,
-                'lang_page_form': self.lang_page_form,
                 'new_lang_form': self.new_lang_form,
+                'select_lang_form': self.select_lang_form,
                 }
 
     @view_config(request_method='POST', request_param='msgid')
@@ -137,11 +150,11 @@ class PotView():
         return HTTPFound(location=self.request.route_url('po', lang=lang))
 
 
-    @view_config(request_method='POST', request_param='lang_page')
-    def lang_page_view(self):
+    @view_config(request_method='POST', request_param='select_lang')
+    def select_lang_view(self):
 
 
-        lang = self.request.POST.get('lang_page', '').strip()
+        lang = self.request.POST.get('select_lang', '').strip()
 
         self.request.locale = babel.Locale(*babel.parse_locale(lang))
 

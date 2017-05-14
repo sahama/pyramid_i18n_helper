@@ -11,12 +11,12 @@
     {% endfor %}
 
 
-    {% for css in lang_page_form.get_widget_resources()['css'] %}
+    {% for css in select_lang_form.get_widget_resources()['css'] %}
         <link rel="stylesheet" href="{{ request.static_url(css) }}" type="text/css"/>
     {% endfor %}
 
 
-    {% for js in lang_page_form.get_widget_resources()['js'] %}
+    {% for js in select_lang_form.get_widget_resources()['js'] %}
         <script type="text/javascript" src="{{ request.static_url(js) }}"></script>
     {% endfor %}
 
@@ -30,8 +30,19 @@
         <script type="text/javascript" src="{{ request.static_url(js) }}"></script>
     {% endfor %}
 
-    {{ lang_page_form.render() | safe }}
-    {{ new_lang_form.render() | safe }}
+{#    <input type="text" name="city" list="citynames">#}
+{#    <datalist id="citynames">#}
+{#      <option value="Boston">#}
+{#      <option value="Cambridge">#}
+{#    </datalist>#}
+<div class="row">
+<div class="col col-sm-6">
+{{ new_lang_form.render() | safe }}
+</div>
+    <div class="col col-sm-6">
+    {{ select_lang_form.render() | safe }}
+    </div>
+</div>
     {{ msg_form.render(msg_form_data) | safe }}
 
 

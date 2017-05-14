@@ -57,6 +57,12 @@ Khown Issues
 Changes
 =======
 
+v 0.2.7
+-------
+
+ - modify create lang and select lang
+ - error in creating new lang if lang not valid in babel
+
 v 0.2.6
 -------
 
