@@ -8,7 +8,7 @@ import os
 import babel
 
 
-@view_defaults(route_name='po', renderer='pyramid_i18n_helper:templates/po.jinja2', permission='admin')
+@view_defaults(route_name='po', renderer='pyramid_i18n_helper:templates/po.jinja2', permission='i18n_helper')
 class PoView():
     def __init__(self, context, request: Request):
         self.request = request
@@ -39,7 +39,6 @@ class PoView():
             msgid = PoEntry()
 
         def validator(node, appstruct):
-            print('appstruct is: ', appstruct)
             return True
 
         schema = MainSchema(validator=validator)

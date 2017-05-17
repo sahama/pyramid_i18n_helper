@@ -10,7 +10,7 @@ import babel
 import locale
 
 
-@view_defaults(route_name='pot', renderer='pyramid_i18n_helper:templates/pot.jinja2', permission='admin')
+@view_defaults(route_name='pot', renderer='pyramid_i18n_helper:templates/pot.jinja2', permission='i18n_helper')
 class PotView():
     def __init__(self, context, request: Request):
         self.request = request
@@ -53,7 +53,6 @@ class PotView():
                 )
 
         available_langs_choices = sorted(locale.locale_alias)
-        print(created_langs_choices)
 
 
         class NewLang(colander.Schema):

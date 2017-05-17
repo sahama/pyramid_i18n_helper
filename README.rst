@@ -57,6 +57,11 @@ Khown Issues
 Changes
 =======
 
+v 0.2.8
+-------
+
+ - set permission to 'i18n_helper'. so user want to access pages have to have this permission.
+
 v 0.2.7
 -------
 

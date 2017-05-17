@@ -17,6 +17,7 @@ class I18NHelper(object):
     def __init__(self, package):
         self.package = package
         self.pot_msgids = {}
+        # self.default_permission = 'i18n_helper'
         # package = sys.modules[package_name]
         # directory = os.path.join(package_path(package), filename)
 
@@ -32,12 +33,18 @@ class I18NHelper(object):
     def package_name(self):
         return os.path.basename(os.path.dirname(self.package.__file__))
 
+def set_default_permission(config, default_permission):
+    helper = config.registry['i18n_helper']
+    helper.default_permission = default_permission
+
 
 def includeme(config):
     # config.add_directive('i18n_helper_add_translation_dirs', i18n_helper_add_translation_dirs)
     # package = _caller_package(('pyramid', 'pyramid.', 'pyramid_jinja2'))
     helper = I18NHelper(config.root_package)
     config.registry['i18n_helper'] = helper
+
+    # config.add_directive('set_i18n_helper_default_permission', set_default_permission)
 
     config.add_route('po', '/po/{lang}')
     config.add_route('pot', '/pot')
