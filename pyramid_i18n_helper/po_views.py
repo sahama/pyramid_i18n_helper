@@ -21,7 +21,7 @@ class PoView():
 
         self.locale = babel.Locale(*babel.parse_locale(self.lang))
 
-    def form_creator(self):
+    def create_form(self):
         po_entries = {entry.msgid: entry.msgstr for entry in self.po}
 
         class PoEntry(colander.Schema):
@@ -55,7 +55,7 @@ class PoView():
         context = self.context
         _ = request.translate
 
-        self.form_creator()
+        self.create_form()
 
         return {"form": self.form, 'locale': self.locale}
 
@@ -66,6 +66,7 @@ class PoView():
         context = self.context
         _ = request.translate
         lang = self.lang
+        self.create_form()
 
         controls = request.POST.items()
 
