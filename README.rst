@@ -57,6 +57,11 @@ Khown Issues
 Changes
 =======
 
+v 0.2.9
+-------
+
+ - add flash message.
+
 v 0.2.8
 -------
 
