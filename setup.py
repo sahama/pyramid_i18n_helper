@@ -14,11 +14,12 @@ requires = [
     'polib',
     'paginate',
     'babel',
+    'pyramid_flash_message',
     ]
 
 
 setup(name='pyramid_i18n_helper',
-      version='0.2.8',
+      version='0.2.9',
       description='Small tool to help in i18n and l10n',
       long_description=README,
       classifiers=[

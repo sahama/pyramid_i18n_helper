@@ -8,6 +8,7 @@ import os
 from pyramid.httpexceptions import HTTPFound
 import babel
 import locale
+from pyramid_flash_message import MessageQueue
 
 
 @view_defaults(route_name='pot', renderer='pyramid_i18n_helper:templates/pot.jinja2', permission='i18n_helper')
@@ -16,6 +17,8 @@ class PotView():
         self.request = request
         self.context = context
         _ = request.translate
+
+        self.request.message_queue = MessageQueue()
 
         self.helper = request.registry['i18n_helper']
 
@@ -115,6 +118,7 @@ class PotView():
 
         except:
             appstruct = None
+            self.request.message_queue.add(message_type='danger', body='not_valid_data')
 
         if appstruct:
             self.pot = polib.POFile()
@@ -124,29 +128,41 @@ class PotView():
                 self.pot.append(entry)
 
             self.pot.save(os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.helper.package_name)))
+            self.request.message_queue.add(message_type='success', body='success')
 
         self.pot = polib.pofile(
             os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.helper.package_name)))
 
         return self.get_view()
 
+
     @view_config(request_method='POST', request_param='new_lang')
     def lang_view(self):
 
 
         lang = self.request.POST.get('new_lang', '').strip()
+        try:
+            self.request.locale = babel.Locale(*babel.parse_locale(lang))
 
-        self.request.locale = babel.Locale(*babel.parse_locale(lang))
+            if not os.path.isdir(os.path.join(self.helper.package_dir, 'locale', lang)):
+                os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang))
+                os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES'))
+                self.pot.save(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
+                                           '{0}.po'.format(self.helper.package_name)))
+                self.pot.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
+                                                     '{0}.mo'.format(self.helper.package_name)))
+                self.request.message_queue.add(message_type='success', body='success')
 
-        if not os.path.isdir(os.path.join(self.helper.package_dir, 'locale', lang)):
-            os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang))
-            os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES'))
-            self.pot.save(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.po'.format(self.helper.package_name)))
-            self.pot.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES', '{0}.mo'.format(self.helper.package_name)))
-        else:
-            pass
+                return HTTPFound(location=self.request.route_url('po', lang=lang))
 
-        return HTTPFound(location=self.request.route_url('po', lang=lang))
+            else:
+                self.request.message_queue.add(message_type='danger', body='can_not_create_lang')
+
+        except:
+            self.request.message_queue.add(message_type='danger', body='not_valid_lang')
+
+
+        return self.get_view()
 
 
     @view_config(request_method='POST', request_param='select_lang')
