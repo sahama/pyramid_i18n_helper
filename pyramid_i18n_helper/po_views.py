@@ -76,7 +76,7 @@ class PoView():
 
         except:
             appstruct = None
-            self.request.message_queue.add(message_type='danger', body='not_valid_data')
+            self.request.flash_message.add(message_type='danger', body='not_valid_data')
 
         if appstruct:
             # TODO:
@@ -88,7 +88,7 @@ class PoView():
             self.po.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
                                                 '{0}.mo'.format(self.helper.package_name)))
 
-            self.request.message_queue.add(message_type='success', body='success')
+            self.request.flash_message.add(message_type='success', body='success')
 
         return self.get_view()
 
