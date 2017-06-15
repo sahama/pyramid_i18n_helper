@@ -44,8 +44,8 @@ class PoView():
         schema = MainSchema(validator=validator)
         schema = schema.bind(request=self.request)
         self.form = deform.Form(schema, use_ajax=False, action=self.request.route_url('po', lang=self.lang))
-        self.form.buttons.append(deform.Button(name='submit', title='submit'))
-        self.form.buttons.append(deform.Button(name='reload', title='reload'))
+        self.form.buttons.append(deform.Button(name='submit', title='i18n_translate_submit'))
+        self.form.buttons.append(deform.Button(name='reload', title='i18n_translate_reload'))
         return self.form
 
     @view_config(request_method="GET")
@@ -76,7 +76,7 @@ class PoView():
 
         except:
             appstruct = None
-            self.request.flash_message.add(message_type='danger', body='not_valid_data')
+            self.request.flash_message.add(message_type='danger', body='i18n_translate_data_not_valid')
 
         if appstruct:
             # TODO:
@@ -88,7 +88,7 @@ class PoView():
             self.po.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
                                                 '{0}.mo'.format(self.helper.package_name)))
 
-            self.request.flash_message.add(message_type='success', body='success')
+            self.request.flash_message.add(message_type='success', body='i18n_translate_success')
 
         return self.get_view()
 
@@ -115,4 +115,5 @@ class PoView():
                                   '{0}.po'.format(self.helper.package_name)))
         self.po.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
                                             '{0}.mo'.format(self.helper.package_name)))
+        self.request.flash_message.add(message_type='success', body='i18n_reload_success')
         return self.get_view()

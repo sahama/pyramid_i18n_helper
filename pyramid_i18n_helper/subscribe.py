@@ -40,14 +40,13 @@ def add_renderer_globals(event):
     event['locale'] = request.locale
 
 @subscriber(NewResponse)
-def before_response(event):
+def collector(event):
     request = event.request
     helper = request.registry['i18n_helper']
 
     collect_msgid = asbool(request.registry.settings.get('i18n_helper.collect_msgid'))
 
     if collect_msgid:
-
         for domain in helper.pot_msgids:
             s = helper.pot_msgids[domain]
             if s:

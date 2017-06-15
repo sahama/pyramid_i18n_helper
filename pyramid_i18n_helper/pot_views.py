@@ -8,7 +8,8 @@ import os
 from pyramid.httpexceptions import HTTPFound
 import babel
 import locale
-
+import logging
+log = logging.getLogger(__name__)
 
 @view_defaults(route_name='pot', renderer='pyramid_i18n_helper:templates/pot.jinja2', permission='i18n_helper')
 class PotView():
@@ -27,7 +28,7 @@ class PotView():
             msgid = MessageID(title="msgid", widget=widget.SequenceWidget(orderable=True))
 
         def validator(node, appstruct):
-            # TODO:
+            # TODO: some validation
             return True
 
         schema = MainSchema(validator=validator)
@@ -59,12 +60,12 @@ class PotView():
             new_lang = colander.SchemaNode(colander.String(),
                                            widget=deform.widget.AutocompleteInputWidget(values=available_langs_choices,
                                                                                         min_length=0),
-                                           title="New Lang")
+                                           title=_("i18n_new_lang"))
 
         class SelectLang(colander.Schema):
             select_lang = colander.SchemaNode(colander.String(),
                                            widget=deform.widget.SelectWidget(values=created_langs_choices),
-                                           title="Select Lang")
+                                           title=_("i18n_select_lang"))
 
 
         def validator(node, appstruct):
@@ -73,12 +74,12 @@ class PotView():
         schema = NewLang(validator=validator)
         schema = schema.bind(request=self.request)
         self.new_lang_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('pot'))
-        self.new_lang_form.buttons.append(deform.Button(name='submit', title='submit'))
+        self.new_lang_form.buttons.append(deform.Button(name='submit', title=_('i18n_new_lang_submit')))
 
         schema = SelectLang(validator=validator)
         schema = schema.bind(request=self.request)
         self.select_lang_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('pot'))
-        self.select_lang_form.buttons.append(deform.Button(name='submit', title='submit'))
+        self.select_lang_form.buttons.append(deform.Button(name='submit', title=_('i18n_select_lang_submit')))
 
     @view_config(request_method="GET")
     def get_view(self):
@@ -115,7 +116,7 @@ class PotView():
 
         except:
             appstruct = None
-            self.request.flash_message.add(message_type='danger', body='not_valid_data')
+            self.request.flash_message.add(message_type='danger', body='i18n_pot_msg_data_not_valid')
 
         if appstruct:
             self.pot = polib.POFile()
@@ -125,7 +126,7 @@ class PotView():
                 self.pot.append(entry)
 
             self.pot.save(os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.helper.package_name)))
-            self.request.flash_message.add(message_type='success', body='success')
+            self.request.flash_message.add(message_type='success', body='i18n_pot_msg_data_process_success')
 
         self.pot = polib.pofile(
             os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.helper.package_name)))
@@ -134,8 +135,7 @@ class PotView():
 
 
     @view_config(request_method='POST', request_param='new_lang')
-    def lang_view(self):
-
+    def new_lang_view(self):
 
         lang = self.request.POST.get('new_lang', '').strip()
         try:
@@ -148,16 +148,16 @@ class PotView():
                                            '{0}.po'.format(self.helper.package_name)))
                 self.pot.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
                                                      '{0}.mo'.format(self.helper.package_name)))
-                self.request.flash_message.add(message_type='success', body='success')
+
+                self.request.flash_message.add(message_type='success', body='i18n_new_lang_creation_success')
 
                 return HTTPFound(location=self.request.route_url('po', lang=lang))
 
             else:
-                self.request.flash_message.add(message_type='danger', body='can_not_create_lang')
+                self.request.flash_message.add(message_type='danger', body='i18n_new_lang_lang_exist')
 
         except:
-            self.request.flash_message.add(message_type='danger', body='not_valid_lang')
-
+            self.request.flash_message.add(message_type='danger', body='i18n_new_lang_creation_error')
 
         return self.get_view()
 
