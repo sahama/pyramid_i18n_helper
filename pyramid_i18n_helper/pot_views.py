@@ -20,7 +20,6 @@ class PotView():
 
         self.helper = request.registry['i18n_helper']
 
-
         self.pot = polib.pofile(
             os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.helper.package_name)))
 
