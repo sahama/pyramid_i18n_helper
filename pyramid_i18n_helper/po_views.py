@@ -22,6 +22,7 @@ class PoView():
         self.locale = babel.Locale(*babel.parse_locale(self.lang))
 
     def create_form(self):
+        _ = self.request.translate
         po_entries = {entry.msgid: entry.msgstr for entry in self.po}
 
         class PoEntry(colander.Schema):
@@ -44,8 +45,8 @@ class PoView():
         schema = MainSchema(validator=validator)
         schema = schema.bind(request=self.request)
         self.form = deform.Form(schema, use_ajax=False, action=self.request.route_url('po', lang=self.lang))
-        self.form.buttons.append(deform.Button(name='submit', title='i18n_translate_submit'))
-        self.form.buttons.append(deform.Button(name='reload', title='i18n_translate_reload'))
+        self.form.buttons.append(deform.Button(name='submit', title=_('i18n_translate_submit', domain='i18n_helper')))
+        self.form.buttons.append(deform.Button(name='reload', title=_('i18n_translate_reload', domain='i18n_helper')))
         return self.form
 
     @view_config(request_method="GET")
@@ -76,7 +77,7 @@ class PoView():
 
         except:
             appstruct = None
-            self.request.flash_message.add(message_type='danger', body='i18n_translate_data_not_valid')
+            self.request.flash_message.add(message_type='danger', body='i18n_translate_data_not_valid', domain='i18n_helper')
 
         if appstruct:
             # TODO:
@@ -88,7 +89,7 @@ class PoView():
             self.po.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
                                                 '{0}.mo'.format(self.helper.package_name)))
 
-            self.request.flash_message.add(message_type='success', body='i18n_translate_success')
+            self.request.flash_message.add(message_type='success', body='i18n_translate_success', domain='i18n_helper')
 
         return self.get_view()
 
@@ -115,5 +116,5 @@ class PoView():
                                   '{0}.po'.format(self.helper.package_name)))
         self.po.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
                                             '{0}.mo'.format(self.helper.package_name)))
-        self.request.flash_message.add(message_type='success', body='i18n_reload_success')
+        self.request.flash_message.add(message_type='success', body='i18n_reload_success', domain='i18n_helper')
         return self.get_view()
