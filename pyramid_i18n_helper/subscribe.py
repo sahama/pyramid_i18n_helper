@@ -49,10 +49,19 @@ def collector(event):
     if collect_msgid:
         for domain in helper.pot_msgids:
             s = helper.pot_msgids[domain]
+            pot_path = os.path.join(helper.package_dir, 'locale', '{0}.pot'.format(domain))
             if s:
-                new_pot = polib.pofile(
-                    os.path.join(helper.package_dir, 'locale', '{0}.pot'.format(domain)),
-                    check_for_duplicates=True)
+                try:
+                    new_pot = polib.pofile(
+                        os.path.join(pot_path),
+                        check_for_duplicates=True)
+                except:
+                    new_pot = polib.POFile(check_for_duplicates=True)
+                    new_pot.save(pot_path)
+                    request.flash_message.add('i18n_pot_msg_new_domain_create ${domain}',
+                                              message_type='info',
+                                              mapping={'domain':domain},
+                                              domain=domain)
 
                 for msgid in [s.pop() for i in range(len(s))]:
                     entry = polib.POEntry(msgid=msgid)
