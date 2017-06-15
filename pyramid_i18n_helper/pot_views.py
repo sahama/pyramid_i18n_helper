@@ -11,19 +11,19 @@ import locale
 import logging
 log = logging.getLogger(__name__)
 
-@view_defaults(route_name='pot', renderer='pyramid_i18n_helper:templates/pot.jinja2', permission='i18n_helper')
+@view_defaults(route_name='i18n_helper.pot', renderer='pyramid_i18n_helper:templates/pot.jinja2', permission='i18n_helper')
 class PotView():
     def __init__(self, context, request: Request):
         self.request = request
         self.context = context
+        self.domain = request.matchdict['domain']
         _ = request.translate
 
         self.helper = request.registry['i18n_helper']
-        self.pot_dir = os.path.join(self.helper.package_dir, 'locale')
-        self.pot_list = [polib.pofile(os.path.join(self.pot_dir, pot)) for pot in os.listdir(self.pot_dir) if pot.endswith('.pot')]
-        # print(dir(self.pot_list[0].path))
-        # self.pot = polib.pofile(
-        #     os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.helper.package_name)))
+
+        self.pot = polib.pofile(
+            os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)))
+
 
 
         # LANG FORM
@@ -57,12 +57,16 @@ class PotView():
 
         schema = NewLang(validator=validator)
         schema = schema.bind(request=self.request)
-        self.new_lang_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('pot'))
+        self.new_lang_form = deform.Form(schema,
+                                         use_ajax=False,
+                                         action=self.request.route_url('i18n_helper.pot', domain=self.domain))
         self.new_lang_form.buttons.append(deform.Button(name='submit', title=_('i18n_new_lang_submit')))
 
         schema = SelectLang(validator=validator)
         schema = schema.bind(request=self.request)
-        self.select_lang_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('pot'))
+        self.select_lang_form = deform.Form(schema,
+                                            use_ajax=False,
+                                            action=self.request.route_url('i18n_helper.pot', domain=self.domain))
         self.select_lang_form.buttons.append(deform.Button(name='submit', title=_('i18n_select_lang_submit')))
 
         # MSG FORM
@@ -70,63 +74,49 @@ class PotView():
         request = self.request
         _ = request.translate
 
-
-        class Msg(colander.SequenceSchema):
+        class MessageID(colander.SequenceSchema):
             msgid = colander.SchemaNode(colander.String())
 
-        class Domain(colander.Schema):
-            _domain = colander.SchemaNode(colander.String(), widget=widget.TextInputWidget(readonly=True), missing='')
-            domain = colander.SchemaNode(colander.String(), widget=widget.HiddenWidget())
-            msgid = Msg()
-
-        class MessageSchema(colander.SequenceSchema):
-
-            msgid = Domain(title="msgid")
-
-        class DomainSchema(colander.Schema):
-            domain = MessageSchema(title="domain")
+        class MainSchema(colander.Schema):
+            msgid = MessageID(title="msgid", widget=widget.SequenceWidget(orderable=True))
 
         def validator(node, appstruct):
             # TODO: some validation
             return True
 
-        schema = DomainSchema(validator=validator)
+        schema = MainSchema(validator=validator)
         schema = schema.bind(request=self.request)
-        self.msg_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('pot'))
+        self.msg_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('i18n_helper.pot', domain=self.domain))
         self.msg_form.buttons.append(deform.Button(name='submit', title=_('i18n_pot_submit')))
         return self.msg_form
 
+
+
     @view_config(request_method="GET")
     def get_view(self):
+
         request = self.request
         context = self.context
-        self.msg_form = self.msg_form_creator()
+
         _ = request.translate
 
+        self.msg_form = self.msg_form_creator()
+
         entries = []
-        for domain in self.pot_list:
-            domain_entries = []
-            for entry in domain:
-                domain_entries.append(entry.msgid)
-            entries.append({'msgid':domain_entries,
-                            '_domain': os.path.split(domain.fpath)[1],
-                            'domain': os.path.split(domain.fpath)[1],
-                            })
+        for entry in self.pot:
+            entries.append(entry.msgid)
 
-        print(entries)
-        # appstruct is: {'domain': [{'msgid': ['m1', 'm2'], 'domain': 'd1'}, {'msgid': ['m1', 'm2'], 'domain': 'd2'}]}
+        msg_form_data = {'msgid': entries}
 
-        msg_form_data = {'domain': entries}
-        # msg_form_data = {}
+        print(msg_form_data)
 
+        return_dict = {'msg_form'        : self.msg_form,
+                       'msg_form_data'   : msg_form_data,
+                       'new_lang_form'   : self.new_lang_form,
+                       'select_lang_form': self.select_lang_form,
+                       }
 
-
-        return_dict = {'msg_form': self.msg_form,
-                'msg_form_data': msg_form_data,
-                'new_lang_form': self.new_lang_form,
-                'select_lang_form': self.select_lang_form,
-                }
-
+        print(return_dict)
         return return_dict
 
     @view_config(request_method='POST', request_param='msgid')
@@ -137,14 +127,13 @@ class PotView():
 
         _ = request.translate
 
-        controls = request.POST.items()
+
         self.msg_form = self.msg_form_creator()
-        appstruct = self.msg_form.validate(controls)
-        print('appstruct is:', appstruct)
+
 
         try:
+            controls = request.POST.items()
             appstruct = self.msg_form.validate(controls)
-            print('appstruct is:', appstruct)
 
             self.pot = polib.POFile()
 
@@ -152,14 +141,14 @@ class PotView():
                 entry = polib.POEntry(msgid=msgid)
                 self.pot.append(entry)
 
-            self.pot.save(os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.helper.package_name)))
+            self.pot.save(os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)))
             self.request.flash_message.add(message_type='success', body='i18n_pot_msg_data_process_success')
 
         except:
             self.request.flash_message.add(message_type='danger', body='i18n_pot_msg_data_not_valid')
 
         self.pot = polib.pofile(
-            os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.helper.package_name)))
+            os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)))
 
         return self.get_view()
 
@@ -175,13 +164,13 @@ class PotView():
                 os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang))
                 os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES'))
                 self.pot.save(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
-                                           '{0}.po'.format(self.helper.package_name)))
+                                           '{0}.po'.format(self.domain)))
                 self.pot.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
-                                                     '{0}.mo'.format(self.helper.package_name)))
+                                                     '{0}.mo'.format(self.domain)))
 
                 self.request.flash_message.add(message_type='success', body='i18n_new_lang_creation_success')
 
-                return HTTPFound(location=self.request.route_url('po', lang=lang))
+                return HTTPFound(location=self.request.route_url('po', lang=lang, domain=self.domain))
 
             else:
                 self.request.flash_message.add(message_type='danger', body='i18n_new_lang_lang_exist')
@@ -201,4 +190,4 @@ class PotView():
         self.request.locale = babel.Locale(*babel.parse_locale(lang))
 
 
-        return HTTPFound(location=self.request.route_url('po', lang=lang))
+        return HTTPFound(location=self.request.route_url('i18n_helper.po', lang=lang, domain=self.domain))

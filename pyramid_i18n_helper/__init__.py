@@ -46,8 +46,9 @@ def includeme(config):
 
     # config.add_directive('set_i18n_helper_default_permission', set_default_permission)
 
-    config.add_route('po', '/po/{lang}')
-    config.add_route('pot', '/pot')
+    config.add_route('i18n_helper.domain', '/translate')
+    config.add_route('i18n_helper.pot', '/translate/{domain}')
+    config.add_route('i18n_helper.po', '/translate/{domain}/{lang}')
 
     config.scan('pyramid_i18n_helper')
 
