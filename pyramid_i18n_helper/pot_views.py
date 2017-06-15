@@ -19,9 +19,12 @@ class PotView():
         _ = request.translate
 
         self.helper = request.registry['i18n_helper']
-
-        self.pot = polib.pofile(
-            os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.helper.package_name)))
+        self.pot_dir = os.path.join(self.helper.package_dir, 'locale')
+        print(self.pot_dir)
+        self.pot_list = [polib.pofile(os.path.join(self.pot_dir, pot)) for pot in os.listdir(self.pot_dir) if pot.endswith('.pot')]
+        # print(dir(self.pot_list[0].path))
+        # self.pot = polib.pofile(
+        #     os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.helper.package_name)))
 
 
         # LANG FORM
@@ -39,7 +42,6 @@ class PotView():
 
         available_langs_choices = sorted(locale.locale_alias)
 
-
         class NewLang(colander.Schema):
             new_lang = colander.SchemaNode(colander.String(),
                                            widget=deform.widget.AutocompleteInputWidget(values=available_langs_choices,
@@ -50,7 +52,6 @@ class PotView():
             select_lang = colander.SchemaNode(colander.String(),
                                            widget=deform.widget.SelectWidget(values=created_langs_choices),
                                            title=_("i18n_select_lang"))
-
 
         def validator(node, appstruct):
             return True
@@ -73,14 +74,18 @@ class PotView():
         class MessageID(colander.SequenceSchema):
             msgid = colander.SchemaNode(colander.String())
 
-        class MainSchema(colander.Schema):
+        class MessageSchema(colander.SequenceSchema):
+
             msgid = MessageID(title="msgid", widget=widget.SequenceWidget(orderable=True))
+
+        class DomainSchema(colander.Schema):
+            domain = MessageSchema(title="domain")
 
         def validator(node, appstruct):
             # TODO: some validation
             return True
 
-        schema = MainSchema(validator=validator)
+        schema = DomainSchema(validator=validator)
         schema = schema.bind(request=self.request)
         self.msg_form = deform.Form(schema, use_ajax=False, action=self.request.route_url('pot'))
         self.msg_form.buttons.append(deform.Button(name='submit', title=_('i18n_pot_submit')))
@@ -94,10 +99,15 @@ class PotView():
         _ = request.translate
 
         entries = []
-        for entry in self.pot:
-            entries.append(entry.msgid)
+        for domain in self.pot_list:
+            domain_entries = []
+            for entry in domain:
+                domain_entries.append(entry.msgid)
+            entries.append(domain_entries)
 
-        msg_form_data = {'msgid': entries}
+        print(entries)
+
+        msg_form_data = {'domain': entries}
 
         print(msg_form_data)
 
@@ -120,9 +130,13 @@ class PotView():
         _ = request.translate
 
         controls = request.POST.items()
+        self.msg_form = self.msg_form_creator()
+        appstruct = self.msg_form.validate(controls)
+        print('appstruct is:', appstruct)
 
         try:
             appstruct = self.msg_form.validate(controls)
+            print('appstruct is:', appstruct)
 
             self.pot = polib.POFile()
 
