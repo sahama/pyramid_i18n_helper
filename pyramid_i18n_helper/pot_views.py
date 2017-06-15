@@ -20,7 +20,6 @@ class PotView():
 
         self.helper = request.registry['i18n_helper']
         self.pot_dir = os.path.join(self.helper.package_dir, 'locale')
-        print(self.pot_dir)
         self.pot_list = [polib.pofile(os.path.join(self.pot_dir, pot)) for pot in os.listdir(self.pot_dir) if pot.endswith('.pot')]
         # print(dir(self.pot_list[0].path))
         # self.pot = polib.pofile(
@@ -71,12 +70,19 @@ class PotView():
         request = self.request
         _ = request.translate
 
+        class MsgID(colander.Schema):
+            msgid = colander.SchemaNode(colander.String())
+
         class MessageID(colander.SequenceSchema):
             msgid = colander.SchemaNode(colander.String())
 
+        class MsgIDW(colander.Schema):
+            domain = colander.SchemaNode(colander.String())
+            msgid = MessageID()
+
         class MessageSchema(colander.SequenceSchema):
 
-            msgid = MessageID(title="msgid", widget=widget.SequenceWidget(orderable=True))
+            msgid = MsgIDW(title="msgid")
 
         class DomainSchema(colander.Schema):
             domain = MessageSchema(title="domain")
@@ -103,11 +109,13 @@ class PotView():
             domain_entries = []
             for entry in domain:
                 domain_entries.append(entry.msgid)
-            entries.append(domain_entries)
+            entries.append({'msgid':domain_entries, 'domain': os.path.split(domain.fpath)[1]})
 
         print(entries)
+        # appstruct is: {'domain': [{'msgid': ['m1', 'm2'], 'domain': 'd1'}, {'msgid': ['m1', 'm2'], 'domain': 'd2'}]}
 
         msg_form_data = {'domain': entries}
+        # msg_form_data = {}
 
         print(msg_form_data)
 
