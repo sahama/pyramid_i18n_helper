@@ -25,6 +25,7 @@ class PoView():
                                          '{0}.po'.format(self.domain))
         self.mo_file_path = os.path.join(self.helper.package_dir, 'locale', self.lang, 'LC_MESSAGES',
                                          '{0}.mo'.format(self.domain))
+
         if os.path.exists(self.po_file_path):
             self.po = polib.pofile(self.pot_file_path)
         else:
@@ -95,10 +96,8 @@ class PoView():
             for entry in self.po:
                 entry.msgstr = appstruct['msgid'].get(entry.msgid, '')
 
-            self.po.save(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
-                                      '{0}.po'.format(self.domain)))
-            self.po.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
-                                                '{0}.mo'.format(self.domain)))
+            self.po.save(self.po_file_path)
+            self.po.save_as_mofile(self.mo_file_path)
 
             self.request.flash_message.add(message_type='success', body='i18n_translate_success', domain='i18n_helper')
 
