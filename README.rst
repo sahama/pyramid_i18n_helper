@@ -63,9 +63,9 @@ You can use `project issue page <https://github.com/sahama/pyramid_i18n_helper/i
 Khown Issues
 ------------
 
- - After translating a msgid you have to restart your application
- - At now this package use pyramid_layout default layout. form `pyramid_layout documentation page <http://docs.pylonsproject.org/projects/pyramid_layout/en/latest/layouts.html>`_ `main_template is the template object that provides the main template (aka, o-wrap) for the view`. so if your application dont have main_layout. you may have problem.
- - main_layout template have to designed via jinja2
+ * After translating a msgid you have to restart your application
+ * At now this package use pyramid_layout default layout. form `pyramid_layout documentation page <http://docs.pylonsproject.org/projects/pyramid_layout/en/latest/layouts.html>`_ `main_template is the template object that provides the main template (aka, o-wrap) for the view`. so if your application dont have main_layout. you may have problem.
+ * main_layout template have to designed via jinja2
 
 
 Changes
