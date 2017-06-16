@@ -12,8 +12,10 @@ This package add 3 view to your pyramid based application:
  - i18n_helper.pot view in route /translate/{domain}
  - i18n_helper.po view in route /translate/{domain}/{lang}
 
-in `/translate`  you see available domains and also you can create new domain
-in `/translate/{domain}` you can edit pot file for selected domain
+in `/translate`  you see available domains and also you can create new domain.
+
+in `/translate/{domain}` you can edit pot file for selected domain.
+
 in `/translate/{domain}/{lang}` you can translate msgid to selected lang in selected domain. also you can update po file from pot file.
 
 
