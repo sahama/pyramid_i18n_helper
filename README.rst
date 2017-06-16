@@ -57,6 +57,18 @@ Khown Issues
 Changes
 =======
 
+
+v 0.2.13
+--------
+
+ - handle duplication error
+ - create new domain if not exist
+
+v 0.2.11
+--------
+
+ - compatible with pyramid_flash_message 0.2
+
 v 0.2.9
 -------
 

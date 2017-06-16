@@ -30,20 +30,18 @@
         <script type="text/javascript" src="{{ request.static_url(js) }}"></script>
     {% endfor %}
 
-{#    <input type="text" name="city" list="citynames">#}
-{#    <datalist id="citynames">#}
-{#      <option value="Boston">#}
-{#      <option value="Cambridge">#}
-{#    </datalist>#}
-<div class="row">
-<div class="col col-sm-6">
-{{ new_lang_form.render() | safe }}
-</div>
-    <div class="col col-sm-6">
-    {{ select_lang_form.render() | safe }}
+
+    <div class="row">
+        <div class="col col-sm-6">
+            {{ new_lang_form.render() | safe }}
+        </div>
+        <div class="col col-sm-6">
+            {{ select_lang_form.render() | safe }}
+        </div>
     </div>
-</div>
     {{ msg_form.render(msg_form_data) | safe }}
+{#    suggestion: [package]_[module]_[section]_[action]_[result]#}
+{#    suggestion: [i18n]_[new_lang]_[creation]_[success]#}
 
 
 {% endblock content %}
