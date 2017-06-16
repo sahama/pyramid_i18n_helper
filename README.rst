@@ -74,6 +74,12 @@ Changes
 =======
 
 
+v 0.3.0
+-------
+
+ - many change. so new version released.
+ - documentation
+
 v 0.2.14
 --------
 
