@@ -17,10 +17,18 @@ class PoView():
         self.helper = request.registry['i18n_helper']
         self.lang = request.matchdict['lang']
         self.domain = request.matchdict['domain']
-        self.po = polib.pofile(os.path.join(self.helper.package_dir, 'locale', self.lang, 'LC_MESSAGES',
-                                            '{0}.po'.format(self.domain)))
 
         self.locale = babel.Locale(*babel.parse_locale(self.lang))
+
+        self.pot_file_path = os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain))
+        self.po_file_path = os.path.join(self.helper.package_dir, 'locale', self.lang, 'LC_MESSAGES',
+                                         '{0}.po'.format(self.domain))
+        self.mo_file_path = os.path.join(self.helper.package_dir, 'locale', self.lang, 'LC_MESSAGES',
+                                         '{0}.mo'.format(self.domain))
+        if os.path.exists(self.po_file_path):
+            self.po = polib.pofile(self.pot_file_path)
+        else:
+            self.po = polib.POFile()
 
     def create_form(self):
         _ = self.request.translate
@@ -106,18 +114,22 @@ class PoView():
 
         lang = request.matchdict['lang']
 
-        pot = polib.pofile(os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)))
-        self.po = polib.pofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
-                                            '{0}.po'.format(self.domain)))
-        po_entries = {entry.msgid: entry.msgstr for entry in self.po}
+        pot = polib.pofile(self.pot_file_path)
+
+        if os.path.exists(self.po_file_path):
+            self.po = polib.pofile(self.po_file_path)
+            po_entries = {entry.msgid: entry.msgstr for entry in self.po}
+
+        else:
+            self.po = polib.POFile()
+            po_entries = {}
+
 
         for entry in pot:
             if not entry.msgid in po_entries:
                 self.po.append(entry)
 
-        self.po.save(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
-                                  '{0}.po'.format(self.domain)))
-        self.po.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
-                                            '{0}.mo'.format(self.domain)))
+        self.po.save(self.po_file_path)
+        self.po.save_as_mofile(self.mo_file_path)
         self.request.flash_message.add(message_type='success', body='i18n_reload_success', domain='i18n_helper')
         return self.get_view()
