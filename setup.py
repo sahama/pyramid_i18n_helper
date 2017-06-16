@@ -12,14 +12,13 @@ requires = [
     'deform',
     'pyramid_layout',
     'polib',
-    'paginate',
     'babel',
     'pyramid_flash_message',
     ]
 
 
 setup(name='pyramid_i18n_helper',
-      version='0.3.0',
+      version='0.3.1',
       description='Small tool to help in i18n and l10n',
       long_description=README,
       classifiers=[

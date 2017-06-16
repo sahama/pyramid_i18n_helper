@@ -23,6 +23,7 @@ additional object
 -----------------
 
 This package add `Babel <http://babel.pocoo.org/en/latest/>`_ locale object to request.
+This package use `Pyramid_flash_message <https://pypi.python.org/pypi/pyramid-flash-message>`_ to handle flash messages.
 
 collecting msgids
 -----------------
@@ -73,6 +74,12 @@ Khown Issues
 Changes
 =======
 
+
+v 0.3.1
+-------
+
+ - documentation.
+ - remove unnecessary dependency.
 
 v 0.3.0
 -------
