@@ -46,6 +46,7 @@ def collector(event):
 
     collect_msgid = asbool(request.registry.settings.get('i18n_helper.collect_msgid'))
 
+
     if collect_msgid:
         for domain in helper.pot_msgids:
             s = helper.pot_msgids[domain]
@@ -61,7 +62,7 @@ def collector(event):
                     request.flash_message.add('i18n_pot_msg_new_domain_create ${domain}',
                                               message_type='info',
                                               mapping={'domain':domain},
-                                              domain=domain)
+                                              domain='i18n_helper')
 
                 for msgid in [s.pop() for i in range(len(s))]:
                     entry = polib.POEntry(msgid=msgid)

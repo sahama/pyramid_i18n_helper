@@ -43,4 +43,5 @@
 {% endblock content %}
 {% block title %}
     {{ _('translation_for (${en_name}/${display_name})' ,mapping={'en_name':locale.english_name, 'display_name':locale.display_name})  }}
+    domain {{ request.matchdict['domain'] }}
 {% endblock %}

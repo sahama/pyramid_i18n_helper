@@ -8,7 +8,7 @@ import os
 import babel
 
 
-@view_defaults(route_name='po', renderer='pyramid_i18n_helper:templates/po.jinja2', permission='i18n_helper')
+@view_defaults(route_name='i18n_helper.po', renderer='pyramid_i18n_helper:templates/po.jinja2', permission='i18n_helper')
 class PoView():
     def __init__(self, context, request: Request):
         self.request = request
@@ -16,10 +16,20 @@ class PoView():
         _ = request.translate
         self.helper = request.registry['i18n_helper']
         self.lang = request.matchdict['lang']
-        self.po = polib.pofile(os.path.join(self.helper.package_dir, 'locale', self.lang, 'LC_MESSAGES',
-                                            '{0}.po'.format(self.helper.package_name)))
+        self.domain = request.matchdict['domain']
 
         self.locale = babel.Locale(*babel.parse_locale(self.lang))
+
+        self.pot_file_path = os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain))
+        self.po_file_path = os.path.join(self.helper.package_dir, 'locale', self.lang, 'LC_MESSAGES',
+                                         '{0}.po'.format(self.domain))
+        self.mo_file_path = os.path.join(self.helper.package_dir, 'locale', self.lang, 'LC_MESSAGES',
+                                         '{0}.mo'.format(self.domain))
+
+        if os.path.exists(self.po_file_path):
+            self.po = polib.pofile(self.pot_file_path)
+        else:
+            self.po = polib.POFile()
 
     def create_form(self):
         _ = self.request.translate
@@ -44,7 +54,9 @@ class PoView():
 
         schema = MainSchema(validator=validator)
         schema = schema.bind(request=self.request)
-        self.form = deform.Form(schema, use_ajax=False, action=self.request.route_url('po', lang=self.lang))
+        self.form = deform.Form(schema,
+                                use_ajax=False,
+                                action=self.request.route_url('i18n_helper.po', lang=self.lang,domain=self.domain))
         self.form.buttons.append(deform.Button(name='submit', title=_('i18n_translate_submit', domain='i18n_helper')))
         self.form.buttons.append(deform.Button(name='reload', title=_('i18n_translate_reload', domain='i18n_helper')))
         return self.form
@@ -84,10 +96,8 @@ class PoView():
             for entry in self.po:
                 entry.msgstr = appstruct['msgid'].get(entry.msgid, '')
 
-            self.po.save(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
-                                      '{0}.po'.format(self.helper.package_name)))
-            self.po.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
-                                                '{0}.mo'.format(self.helper.package_name)))
+            self.po.save(self.po_file_path)
+            self.po.save_as_mofile(self.mo_file_path)
 
             self.request.flash_message.add(message_type='success', body='i18n_translate_success', domain='i18n_helper')
 
@@ -103,18 +113,22 @@ class PoView():
 
         lang = request.matchdict['lang']
 
-        pot = polib.pofile(os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.helper.package_name)))
-        self.po = polib.pofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
-                                            '{0}.po'.format(self.helper.package_name)))
-        po_entries = {entry.msgid: entry.msgstr for entry in self.po}
+        pot = polib.pofile(self.pot_file_path)
+
+        if os.path.exists(self.po_file_path):
+            self.po = polib.pofile(self.po_file_path)
+            po_entries = {entry.msgid: entry.msgstr for entry in self.po}
+
+        else:
+            self.po = polib.POFile()
+            po_entries = {}
+
 
         for entry in pot:
             if not entry.msgid in po_entries:
                 self.po.append(entry)
 
-        self.po.save(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
-                                  '{0}.po'.format(self.helper.package_name)))
-        self.po.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
-                                            '{0}.mo'.format(self.helper.package_name)))
+        self.po.save(self.po_file_path)
+        self.po.save_as_mofile(self.mo_file_path)
         self.request.flash_message.add(message_type='success', body='i18n_reload_success', domain='i18n_helper')
         return self.get_view()

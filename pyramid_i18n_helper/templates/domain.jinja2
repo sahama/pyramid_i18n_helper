@@ -1,0 +1,27 @@
+{% extends main_template %}
+
+{% block content %}
+    {% for css in select_domain_form.get_widget_resources()['css'] %}
+        <link rel="stylesheet" href="{{ request.static_url(css) }}" type="text/css"/>
+    {% endfor %}
+
+
+    {% for js in select_domain_form.get_widget_resources()['js'] %}
+        <script type="text/javascript" src="{{ request.static_url(js) }}"></script>
+    {% endfor %}
+
+
+        <div class="row">
+
+            <div class="col col-sm-6">
+                {{ select_domain_form.render() | safe }}
+            </div>
+            <div class="col col-sm-6">
+                {{ new_domain_form.render() | safe }}
+            </div>
+        </div>
+
+{% endblock content %}
+{% block title %}
+    {{ _('domain') }}
+{% endblock %}
