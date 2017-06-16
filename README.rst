@@ -2,15 +2,20 @@ Pyramid I18N Helper
 ===================
 
 This is a helper for internationalization and localization in `Pyramid <https://trypyramid.com/>`_
-this package add two view to your pyramid based application:
+this package add 3 view to your pyramid based application:
 
- - pot view in route /pot
- - po view in route /po/{lang}
+ - i18n_helper.domain view in route /translate
+ - i18n_helper.pot view in route /translate/{domain}
+ - i18n_helper.po view in route /translate/{domain}/{lang}
 
 and add `Babel <http://babel.pocoo.org/en/latest/>`_ locale object to request.
 
-in pot view you can edit pot file
-in po view po and mo file for lang will be create. also you can update po file from pot file.
+in `/translate`  you see available domains and also you can create new domain
+in `/translate/{domain}` you can edit pot file for selected domain
+in `/translate/{domain}/{lang}` you can translate msgid to selected lang in selected domain. also you can update po file from pot file.
+
+you can also use auto collect msgids. for this set `i18n_helper.collect_msgid = true` in your project config file.
+by enabling auto collect. new msgids for any domain add to its own pot file. even if pot file for specific is not available it will create automatically
 
 keep in mind this package depend on pyramid_layout default layout
 also at now this package use templates based on jinja2
@@ -57,6 +62,11 @@ Khown Issues
 Changes
 =======
 
+
+v 0.2.14
+--------
+
+ - complete domain view
 
 v 0.2.13
 --------
