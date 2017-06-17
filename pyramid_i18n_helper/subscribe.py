@@ -56,9 +56,11 @@ def collector(event):
                     new_pot = polib.pofile(
                         os.path.join(pot_path),
                         check_for_duplicates=True,
-                        encoding='utf-8')
+                        encoding='UTF-8')
                 except:
                     new_pot = polib.POFile(check_for_duplicates=True)
+                    new_pot.metadata = {'Content-Transfer-Encoding': '8bit',
+                                        'Content-Type'             : 'text/plain; charset=UTF-8'}
                     new_pot.save(pot_path)
                     request.flash_message.add('i18n_pot_msg_new_domain_create ${domain}',
                                               message_type='info',
@@ -72,4 +74,6 @@ def collector(event):
                     except ValueError as e:
                         pass
 
+                new_pot.metadata = {'Content-Transfer-Encoding': '8bit',
+                                     'Content-Type'             : 'text/plain; charset=UTF-8'}
                 new_pot.save()

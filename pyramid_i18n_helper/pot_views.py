@@ -23,7 +23,7 @@ class PotView():
 
         self.pot = polib.pofile(
             os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)),
-            encoding='utf-8'
+            encoding='UTF-8'
         )
 
 
@@ -136,11 +136,14 @@ class PotView():
             controls = request.POST.items()
             appstruct = self.msg_form.validate(controls)
 
-            self.pot = polib.POFile(encoding='utf-8')
+            self.pot = polib.POFile(encoding='UTF-8')
 
             for msgid in set(appstruct['msgid']):
                 entry = polib.POEntry(msgid=msgid)
                 self.pot.append(entry)
+
+            self.pot.metadata = {'Content-Transfer-Encoding': '8bit',
+                                'Content-Type'             : 'text/plain; charset=UTF-8'}
 
             self.pot.save(os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)))
             self.request.flash_message.add(message_type='success', body='i18n_pot_msg_data_process_success', domain='i18n_helper')
@@ -150,7 +153,7 @@ class PotView():
 
         self.pot = polib.pofile(
             os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)),
-            encoding='utf-8'
+            encoding='UTF-8'
         )
 
         return self.get_view()

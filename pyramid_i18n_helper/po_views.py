@@ -27,9 +27,13 @@ class PoView():
                                          '{0}.mo'.format(self.domain))
 
         if os.path.exists(self.po_file_path):
-            self.po = polib.pofile(self.po_file_path, encoding='utf-8')
+            self.po = polib.pofile(self.po_file_path, encoding='UTF-8')
         else:
-            self.po = polib.POFile(encoding='utf-8')
+            self.po = polib.POFile(encoding='UTF-8')
+
+        self.po.metadata= {'Content-Transfer-Encoding': '8bit',
+                           'Content-Type': 'text/plain; charset=UTF-8',
+                           'Language': self.lang}
 
     def create_form(self):
         _ = self.request.translate
@@ -96,6 +100,10 @@ class PoView():
             for entry in self.po:
                 entry.msgstr = appstruct['msgid'].get(entry.msgid, '')
 
+            self.po.metadata = {'Content-Transfer-Encoding': '8bit',
+                                'Content-Type'             : 'text/plain; charset=UTF-8',
+                                'Language'                 : self.lang}
+
             self.po.save(self.po_file_path)
             self.po.save_as_mofile(self.mo_file_path)
 
@@ -113,14 +121,14 @@ class PoView():
 
         lang = request.matchdict['lang']
 
-        pot = polib.pofile(self.pot_file_path,encoding='utf-8')
+        pot = polib.pofile(self.pot_file_path,encoding='UTF-8')
 
         if os.path.exists(self.po_file_path):
-            self.po = polib.pofile(self.po_file_path,encoding='utf-8')
+            self.po = polib.pofile(self.po_file_path,encoding='UTF-8')
             po_entries = {entry.msgid: entry.msgstr for entry in self.po}
 
         else:
-            self.po = polib.POFile(encoding='utf-8')
+            self.po = polib.POFile(encoding='UTF-8')
             po_entries = {}
 
 
@@ -128,6 +136,9 @@ class PoView():
             if not entry.msgid in po_entries:
                 self.po.append(entry)
 
+        self.po.metadata = {'Content-Transfer-Encoding': '8bit',
+                            'Content-Type'             : 'text/plain; charset=UTF-8',
+                            'Language'                 : self.lang}
         self.po.save(self.po_file_path)
         self.po.save_as_mofile(self.mo_file_path)
         self.request.flash_message.add(message_type='success', body='i18n_reload_success', domain='i18n_helper')

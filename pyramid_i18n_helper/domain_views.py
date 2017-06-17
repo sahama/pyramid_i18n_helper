@@ -72,7 +72,9 @@ class PoView():
         try:
             domain = self.request.POST.get('new_domain', '').strip()
             assert domain
-            pot = polib.POFile(encoding='utf-8')
+            pot = polib.POFile(encoding='UTF-8')
+            pot.metadata = {'Content-Transfer-Encoding': '8bit',
+                                'Content-Type'             : 'text/plain; charset=UTF-8'}
             pot.save(os.path.join(self.pot_dir, '{0}.pot'.format(domain)))
             self.request.flash_message.add(message_type='success', body='i18n_new_domain_creation_success',
                                            domain='i18n_helper')
