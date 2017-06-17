@@ -27,7 +27,7 @@ class PoView():
                                          '{0}.mo'.format(self.domain))
 
         if os.path.exists(self.po_file_path):
-            self.po = polib.pofile(self.pot_file_path)
+            self.po = polib.pofile(self.po_file_path)
         else:
             self.po = polib.POFile()
 

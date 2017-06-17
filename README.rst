@@ -56,6 +56,7 @@ or
     config.include('pyramid_jinja2')
     config.include('pyramid_i18n_helper')
 
+now user with `i18n_helper` permission can access this pages.
 
 Support
 -------
@@ -74,6 +75,11 @@ Khown Issues
 Changes
 =======
 
+
+v 0.3.2
+-------
+
+ - bug fix.
 
 v 0.3.1
 -------
