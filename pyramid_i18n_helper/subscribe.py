@@ -10,7 +10,7 @@ from pyramid.settings import asbool
 @subscriber(NewRequest)
 def add_localizer(event):
     request = event.request
-    localizer = get_localizer(request)
+    localizer = request.localizer
     helper = request.registry['i18n_helper']
     collect_msgid = asbool(request.registry.settings.get('i18n_helper.collect_msgid'))
 
@@ -25,7 +25,7 @@ def add_localizer(event):
 
         return localizer.translate(helper.tsf(string), mapping=mapping, domain=domain)
 
-    request.localizer = localizer
+    # request.localizer = localizer
     request.translate = auto_translate
     request.locale = babel.Locale(*babel.parse_locale(request.localizer.locale_name))
 
@@ -55,7 +55,8 @@ def collector(event):
                 try:
                     new_pot = polib.pofile(
                         os.path.join(pot_path),
-                        check_for_duplicates=True)
+                        check_for_duplicates=True,
+                        encoding='utf-8')
                 except:
                     new_pot = polib.POFile(check_for_duplicates=True)
                     new_pot.save(pot_path)

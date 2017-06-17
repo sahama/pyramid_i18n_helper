@@ -22,7 +22,9 @@ class PotView():
         self.helper = request.registry['i18n_helper']
 
         self.pot = polib.pofile(
-            os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)))
+            os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)),
+            encoding='utf-8'
+        )
 
 
 
@@ -134,7 +136,7 @@ class PotView():
             controls = request.POST.items()
             appstruct = self.msg_form.validate(controls)
 
-            self.pot = polib.POFile()
+            self.pot = polib.POFile(encoding='utf-8')
 
             for msgid in set(appstruct['msgid']):
                 entry = polib.POEntry(msgid=msgid)
@@ -147,7 +149,9 @@ class PotView():
             self.request.flash_message.add(message_type='danger', body='i18n_pot_msg_data_not_valid', domain='i18n_helper')
 
         self.pot = polib.pofile(
-            os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)))
+            os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)),
+            encoding='utf-8'
+        )
 
         return self.get_view()
 

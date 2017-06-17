@@ -27,9 +27,9 @@ class PoView():
                                          '{0}.mo'.format(self.domain))
 
         if os.path.exists(self.po_file_path):
-            self.po = polib.pofile(self.po_file_path)
+            self.po = polib.pofile(self.po_file_path, encoding='utf-8')
         else:
-            self.po = polib.POFile()
+            self.po = polib.POFile(encoding='utf-8')
 
     def create_form(self):
         _ = self.request.translate
@@ -113,14 +113,14 @@ class PoView():
 
         lang = request.matchdict['lang']
 
-        pot = polib.pofile(self.pot_file_path)
+        pot = polib.pofile(self.pot_file_path,encoding='utf-8')
 
         if os.path.exists(self.po_file_path):
-            self.po = polib.pofile(self.po_file_path)
+            self.po = polib.pofile(self.po_file_path,encoding='utf-8')
             po_entries = {entry.msgid: entry.msgstr for entry in self.po}
 
         else:
-            self.po = polib.POFile()
+            self.po = polib.POFile(encoding='utf-8')
             po_entries = {}
 
 
