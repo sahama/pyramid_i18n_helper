@@ -11,16 +11,19 @@
     {% endfor %}
 
 
-        <div class="row">
+    <div class="row">
 
-            <div class="col col-sm-6">
-                {{ select_domain_form.render() | safe }}
-            </div>
-            <div class="col col-sm-6">
-                {{ new_domain_form.render() | safe }}
-            </div>
+        <div class="col col-sm-6">
+            {{ select_domain_form.render() | safe }}
         </div>
-
+        <div class="col col-sm-6">
+            {{ new_domain_form.render() | safe }}
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        deform.load()
+    </script>
 {% endblock content %}
 {% block title %}
     {{ _('i18n_domain_page_title', domain='i18n_helper') }}

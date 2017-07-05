@@ -2,33 +2,33 @@
 
 {% block content %}
     <table class="table">
-    <tr>
-        <th>
-            attr
-        </th>
-        <th>
-            value
-        </th>
-    </tr>
-    <tr>
-        <td>
-            {{ _('i18n_helper_lang_direction', domain='i18n_helper') }}
-        </td>
-        <td>
-            {{ locale.text_direction }}
-        </td>
-    </tr>
         <tr>
-        <td>
-            {{ _('i18n_helper_character_order', domain='i18n_helper') }}
-        </td>
-        <td>
-            {{ _(locale.character_order, domain='i18n_helper') }}
-        </td>
-    </tr>
+            <th>
+                attr
+            </th>
+            <th>
+                value
+            </th>
+        </tr>
+        <tr>
+            <td>
+                {{ _('i18n_helper_lang_direction', domain='i18n_helper') }}
+            </td>
+            <td>
+                {{ locale.text_direction }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ _('i18n_helper_character_order', domain='i18n_helper') }}
+            </td>
+            <td>
+                {{ _(locale.character_order, domain='i18n_helper') }}
+            </td>
+        </tr>
     </table>
 
-{#    {{ locale.time_zones }}#}
+    {#    {{ locale.time_zones }}#}
     {% for css in form.get_widget_resources()['css'] %}
         <link rel="stylesheet" href="{{ request.static_url(css) }}" type="text/css"/>
     {% endfor %}
@@ -40,8 +40,12 @@
 
     {{ form.render() | safe }}
 
+    <script type="text/javascript">
+        deform.load()
+    </script>
+
 {% endblock content %}
 {% block title %}
-    {{ _('i18n_po_page_title_for_lang ${en_name}/${display_name}' ,mapping={'en_name':locale.english_name, 'display_name':locale.display_name}, domain='i18n_helper')  }}
+    {{ _('i18n_po_page_title_for_lang ${en_name}/${display_name}' ,mapping={'en_name':locale.english_name, 'display_name':locale.display_name}, domain='i18n_helper') }}
     domain {{ request.matchdict['domain'] }}
 {% endblock %}

@@ -40,9 +40,12 @@
         </div>
     </div>
     {{ msg_form.render(msg_form_data) | safe }}
-{#    suggestion: [package]_[module]_[section]_[action]_[result]#}
-{#    suggestion: [i18n]_[new_lang]_[creation]_[success]#}
+    {#    suggestion: [package]_[module]_[section]_[action]_[result]#}
+    {#    suggestion: [i18n]_[new_lang]_[creation]_[success]#}
 
+    <script type="text/javascript">
+        deform.load()
+    </script>
 
 {% endblock content %}
 {% block title %}
