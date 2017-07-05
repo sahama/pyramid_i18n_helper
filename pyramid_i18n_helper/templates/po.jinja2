@@ -1,4 +1,4 @@
-{% extends main_template %}
+{% extends './i18n_main_template.jinja2' %}
 
 {% block content %}
     <table class="table">
@@ -12,7 +12,7 @@
     </tr>
     <tr>
         <td>
-            {{ _('lang_direction') }}
+            {{ _('i18n_helper_lang_direction', domain='i18n_helper') }}
         </td>
         <td>
             {{ locale.text_direction }}
@@ -20,10 +20,10 @@
     </tr>
         <tr>
         <td>
-            {{ _('character_order') }}
+            {{ _('i18n_helper_character_order', domain='i18n_helper') }}
         </td>
         <td>
-            {{ _(locale.character_order) }}
+            {{ _(locale.character_order, domain='i18n_helper') }}
         </td>
     </tr>
     </table>
@@ -42,6 +42,6 @@
 
 {% endblock content %}
 {% block title %}
-    {{ _('translation_for (${en_name}/${display_name})' ,mapping={'en_name':locale.english_name, 'display_name':locale.display_name})  }}
+    {{ _('i18n_po_page_title_for_lang ${en_name}/${display_name}' ,mapping={'en_name':locale.english_name, 'display_name':locale.display_name}, domain='i18n_helper')  }}
     domain {{ request.matchdict['domain'] }}
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends main_template %}
+{% extends './i18n_main_template.jinja2' %}
 
 {% block content %}
     {% for css in msg_form.get_widget_resources()['css'] %}
@@ -46,5 +46,5 @@
 
 {% endblock content %}
 {% block title %}
-    {{ _('pot') }} domain {{ request.matchdict['domain'] }}
+    {{ _('i18n_pot_page_title_for_domain ${domain}',mapping={'domain': request.matchdict['domain'] }, domain='i18n_helper') }}
 {% endblock %}

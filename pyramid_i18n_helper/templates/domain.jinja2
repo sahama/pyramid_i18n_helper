@@ -1,4 +1,4 @@
-{% extends main_template %}
+{% extends './i18n_main_template.jinja2' %}
 
 {% block content %}
     {% for css in select_domain_form.get_widget_resources()['css'] %}
@@ -23,5 +23,5 @@
 
 {% endblock content %}
 {% block title %}
-    {{ _('domain') }}
+    {{ _('i18n_domain_page_title', domain='i18n_helper') }}
 {% endblock %}

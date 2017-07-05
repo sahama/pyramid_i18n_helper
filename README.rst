@@ -76,6 +76,11 @@ Changes
 =======
 
 
+v 0.3.4
+-------
+
+ - remove dependency to master_layout. master_layout is optional.
+
 v 0.3.3
 -------
 
