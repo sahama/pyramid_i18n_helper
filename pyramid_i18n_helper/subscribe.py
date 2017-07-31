@@ -50,7 +50,7 @@ def collector(event):
     if collect_msgid:
         for domain in helper.pot_msgids:
             s = helper.pot_msgids[domain]
-            pot_path = os.path.join(helper.package_dir, 'locale', '{0}.pot'.format(domain))
+            pot_path = os.path.join(helper.locale_dir, 'locale', '{0}.pot'.format(domain))
             if s:
                 try:
                     new_pot = polib.pofile(

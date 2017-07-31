@@ -20,7 +20,7 @@ class PoView():
 
 
         # Select Domain FORM
-        self.pot_dir = os.path.join(self.helper.package_dir, 'locale')
+        self.pot_dir = self.helper.locale_dir
         domains_choices = [(pot.rsplit('.',maxsplit = 1)[0],pot.rsplit('.',maxsplit = 1)[0]) for pot in os.listdir(self.pot_dir) if pot.endswith('.pot')]
 
         class SelectDomain(colander.Schema):

@@ -31,6 +31,11 @@ collecting msgids
 you can also use auto collect msgids. for this set `i18n_helper.collect_msgid = true` in your project config file.
 by enabling auto collect. new msgids for any domain add to its own pot file. even if pot file for specific is not available it will create automatically
 
+translation directory
+---------------------
+
+you can specify translation directory in config file via `i18n_helper.locale_dir`
+
 Installation
 ------------
 
@@ -78,6 +83,11 @@ Khown Issues
 Changes
 =======
 
+
+v 0.3.5
+-------
+
+ - get locale_dir from config file via `i18n_helper.locale_dir`
 
 v 0.3.4
 -------

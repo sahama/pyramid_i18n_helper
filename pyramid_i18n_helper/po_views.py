@@ -20,10 +20,10 @@ class PoView():
 
         self.locale = babel.Locale(*babel.parse_locale(self.lang))
 
-        self.pot_file_path = os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain))
-        self.po_file_path = os.path.join(self.helper.package_dir, 'locale', self.lang, 'LC_MESSAGES',
+        self.pot_file_path = os.path.join(self.helper.locale_dir, '{0}.pot'.format(self.domain))
+        self.po_file_path = os.path.join(self.helper.locale_dir, self.lang, 'LC_MESSAGES',
                                          '{0}.po'.format(self.domain))
-        self.mo_file_path = os.path.join(self.helper.package_dir, 'locale', self.lang, 'LC_MESSAGES',
+        self.mo_file_path = os.path.join(self.helper.locale_dir, self.lang, 'LC_MESSAGES',
                                          '{0}.mo'.format(self.domain))
 
         if os.path.exists(self.po_file_path):

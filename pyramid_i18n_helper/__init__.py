@@ -14,8 +14,9 @@ from pyramid.i18n import TranslationStringFactory
 
 
 class I18NHelper(object):
-    def __init__(self, package):
-        self.package = package
+    def __init__(self, config):
+        self.config = config
+        self.package = config.root_package
         self.pot_msgids = {}
         # self.default_permission = 'i18n_helper'
         # package = sys.modules[package_name]
@@ -26,8 +27,10 @@ class I18NHelper(object):
         return TranslationStringFactory(self.package_name)
 
     @reify
-    def package_dir(self):
-        return os.path.abspath(os.path.dirname(self.package.__file__))
+    def locale_dir(self):
+        package_dir = os.path.abspath(os.path.dirname(self.package.__file__))
+        tmp_locale_dir = self.config.registry.settings.get('i18n_helper.locale_dir',os.path.join(package_dir, 'locale'))
+        return tmp_locale_dir
 
     @reify
     def package_name(self):
@@ -41,7 +44,7 @@ def set_default_permission(config, default_permission):
 def includeme(config):
     # config.add_directive('i18n_helper_add_translation_dirs', i18n_helper_add_translation_dirs)
     # package = _caller_package(('pyramid', 'pyramid.', 'pyramid_jinja2'))
-    helper = I18NHelper(config.root_package)
+    helper = I18NHelper(config)
     config.registry['i18n_helper'] = helper
 
     # config.add_directive('set_i18n_helper_default_permission', set_default_permission)

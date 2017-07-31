@@ -22,14 +22,14 @@ class PotView():
         self.helper = request.registry['i18n_helper']
 
         self.pot = polib.pofile(
-            os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)),
+            os.path.join(self.helper.locale_dir, '{0}.pot'.format(self.domain)),
             encoding='UTF-8'
         )
 
 
 
         # LANG FORM
-        langs_dir = os.path.join(self.helper.package_dir, 'locale')
+        langs_dir = self.helper.locale_dir
         created_langs_choices = []
         for lang in os.listdir(langs_dir):
             if os.path.isdir(os.path.join(langs_dir, lang)):
@@ -145,14 +145,14 @@ class PotView():
             self.pot.metadata = {'Content-Transfer-Encoding': '8bit',
                                 'Content-Type'             : 'text/plain; charset=UTF-8'}
 
-            self.pot.save(os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)))
+            self.pot.save(os.path.join(self.helper.locale_dir, '{0}.pot'.format(self.domain)))
             self.request.flash_message.add(message_type='success', body='i18n_pot_msg_data_process_success', domain='i18n_helper')
 
         except:
             self.request.flash_message.add(message_type='danger', body='i18n_pot_msg_data_not_valid', domain='i18n_helper')
 
         self.pot = polib.pofile(
-            os.path.join(self.helper.package_dir, 'locale', '{0}.pot'.format(self.domain)),
+            os.path.join(self.helper.locale_dir, '{0}.pot'.format(self.domain)),
             encoding='UTF-8'
         )
 
@@ -166,9 +166,9 @@ class PotView():
         try:
             self.request.locale = babel.Locale(*babel.parse_locale(lang))
 
-            if not os.path.isdir(os.path.join(self.helper.package_dir, 'locale', lang)):
-                os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang))
-                os.mkdir(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES'))
+            if not os.path.isdir(os.path.join(self.helper.locale_dir, lang)):
+                os.mkdir(os.path.join(self.helper.locale_dir, lang))
+                os.mkdir(os.path.join(self.helper._dir, 'locale', lang, 'LC_MESSAGES'))
                 # self.pot.save(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
                 #                            '{0}.po'.format(self.domain)))
                 # self.pot.save_as_mofile(os.path.join(self.helper.package_dir, 'locale', lang, 'LC_MESSAGES',
