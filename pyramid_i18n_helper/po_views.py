@@ -26,6 +26,8 @@ class PoView():
         self.mo_file_path = os.path.join(self.helper.locale_dir, self.lang, 'LC_MESSAGES',
                                          '{0}.mo'.format(self.domain))
 
+        os.makedirs(os.path.join(self.helper.locale_dir, self.lang, 'LC_MESSAGES'), exist_ok=True)
+
         if os.path.exists(self.po_file_path):
             self.po = polib.pofile(self.po_file_path, encoding='UTF-8')
         else:
